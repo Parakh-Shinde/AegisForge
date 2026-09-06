@@ -3,6 +3,9 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from aegisforge.core.normalization import normalize_prompt
+from aegisforge.core.prompt_context import classify_context
+
 
 @dataclass(frozen=True)
 class GuardFinding:
@@ -61,13 +64,25 @@ _EDUCATIONAL_CONTEXT = re.compile(
 
 def inspect_prompt(prompt: str) -> tuple[GuardFinding, ...]:
     """Return explainable findings; never treats a model as a policy authority."""
-    normalized = " ".join(prompt.split())[:20_000]
+    normalized_prompt = normalize_prompt(prompt)
     findings: list[GuardFinding] = []
-    educational = bool(_EDUCATIONAL_CONTEXT.search(normalized))
-    for rule_id, severity, category, pattern, reason in _RULES:
-        if not pattern.search(normalized):
-            continue
-        if category == "instruction_override" and educational:
-            continue
-        findings.append(GuardFinding(rule_id, severity, category, reason))
+    for candidate in normalized_prompt.inspection_texts:
+        educational = bool(_EDUCATIONAL_CONTEXT.search(candidate))
+        context = classify_context(candidate)
+        for rule_id, severity, category, pattern, reason in _RULES:
+            if not pattern.search(candidate):
+                continue
+            if category == "instruction_override" and educational:
+                continue
+            if context.quoted_or_translated:
+                continue
+            if category == "secret_extraction" and (
+                context.defensive_guidance or context.credential_operations
+            ):
+                continue
+            if category == "tool_abuse" and context.secure_architecture:
+                continue
+            finding = GuardFinding(rule_id, severity, category, reason)
+            if finding not in findings:
+                findings.append(finding)
     return tuple(findings)
