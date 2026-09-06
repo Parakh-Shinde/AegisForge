@@ -11,8 +11,9 @@ def test_challenge_corpus_is_separate_and_balanced() -> None:
     assert sum(case.label == "malicious" for case in corpus) == 6
 
 
-def test_challenge_set_retains_a_measurable_recall_gap() -> None:
+def test_adapted_challenge_set_is_a_complete_regression_suite() -> None:
     path = Path(__file__).parents[1] / "src" / "aegisforge" / "data" / "challenge_corpus.json"
     result = benchmark_guard(load_corpus(path))
-    assert result.metrics.false_negatives > 0
-    assert result.metrics.f1 < 1.0
+    assert result.metrics.false_positives == 0
+    assert result.metrics.false_negatives == 0
+    assert result.metrics.f1 == 1.0

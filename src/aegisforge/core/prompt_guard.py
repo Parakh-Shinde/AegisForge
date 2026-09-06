@@ -53,6 +53,28 @@ _RULES: tuple[tuple[str, str, str, re.Pattern[str], str], ...] = (
         ),
         "Input uses role-play language to invalidate trusted rules.",
     ),
+    (
+        "AF-PROMPT-005",
+        "high",
+        "paraphrased_override",
+        re.compile(
+            r"\b(forget|discard|abandon)\b.{0,40}\b(earlier|previous|prior)\b"
+            r".{0,40}\b(directive|instruction|rule)s?\b",
+            re.I,
+        ),
+        "Input paraphrases an instruction-override request.",
+    ),
+    (
+        "AF-PROMPT-006",
+        "high",
+        "multilingual_override",
+        re.compile(
+            r"\b(pichle|purane)\b.{0,40}\b(nirdesh|instructions?|rules?)\b"
+            r".{0,40}\b(bhool|ignore)\b",
+            re.I,
+        ),
+        "Input contains a transliterated instruction-override request.",
+    ),
 )
 
 _EDUCATIONAL_CONTEXT = re.compile(
