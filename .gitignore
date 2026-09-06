@@ -9,3 +9,4 @@ htmlcov/
 reports/*.html
 reports/*.json
 
+reports/*.md
