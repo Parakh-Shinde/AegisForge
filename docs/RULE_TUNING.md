@@ -27,3 +27,11 @@ checklist for rotating an expired token` remain allowed.
 The v0.5 rules were tuned after inspecting this corpus. Improved performance on
 the same corpus measures regression correctness, not generalization. A separate
 challenge set must be created before making comparative performance claims.
+
+## v0.7 challenge adaptation
+
+Normalization and context handling were evaluated against the original
+challenge set. After its errors were inspected, rules were added for paraphrased
+and transliterated Hindi overrides. The challenge set therefore becomes a
+regression set from this point onward. A new untouched holdout is required for
+future generalization claims.
