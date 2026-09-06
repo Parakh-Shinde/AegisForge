@@ -1,0 +1,19 @@
+id: AF-CORR-001
+title: RAG-to-API attack chain correlated
+status: experimental
+severity: critical
+sequence:
+  - rag.retrieve_suspicious
+  - agent.tool_invocation
+  - api.cross_tenant_access
+mappings:
+  mitre_atlas: [AML.T0051, AML.T0053]
+  mitre_attack: [T1078, T1074]
+  owasp_api: [API1:2023]
+false_positives:
+  - approved cross-tenant administrative workflow
+response:
+  - revoke the agent session
+  - quarantine the retrieved document
+  - review tool authorization and tenant checks
+
