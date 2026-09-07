@@ -10,6 +10,7 @@ from aegisforge.core.ai_evaluation import evaluate_prompt
 from aegisforge.core.benchmark import benchmark_guard, load_corpus, write_benchmark_report
 from aegisforge.core.lab import LabMode
 from aegisforge.core.ollama import OllamaClient, OllamaError
+from aegisforge.core.quality_gate import evaluate_quality_gate
 from aegisforge.core.reporting import write_json_report, write_markdown_report
 from aegisforge.core.runner import run_hero_scenario
 from aegisforge.core.target_policy import TargetPolicyError, validate_target
@@ -152,3 +153,28 @@ def challenge_benchmark(
             indent=2,
         )
     )
+
+
+@app.command("benchmark-gate")
+def benchmark_gate() -> None:
+    """Fail when a regression corpus falls below its quality policy."""
+    data_directory = Path(__file__).parent / "data"
+    suites = (
+        ("tuning", load_corpus(data_directory / "prompt_corpus.json")),
+        ("adapted_challenge", load_corpus(data_directory / "challenge_corpus.json")),
+    )
+    results = [
+        evaluate_quality_gate(name, benchmark_guard(cases)) for name, cases in suites
+    ]
+    passed = all(result.passed for result in results)
+    typer.echo(
+        json.dumps(
+            {
+                "passed": passed,
+                "suites": [result.to_dict() for result in results],
+            },
+            indent=2,
+        )
+    )
+    if not passed:
+        raise typer.Exit(code=1)
