@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aegisforge"
-version = "0.7.0"
+version = "0.8.0"
 description = "Lab-safe AI/API adversary emulation and detection validation"
 readme = "README.md"
 requires-python = ">=3.11"
