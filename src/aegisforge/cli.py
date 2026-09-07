@@ -10,8 +10,8 @@ from aegisforge.core.ai_evaluation import evaluate_prompt
 from aegisforge.core.benchmark import benchmark_guard, load_corpus, write_benchmark_report
 from aegisforge.core.lab import LabMode
 from aegisforge.core.ollama import OllamaClient, OllamaError
-from aegisforge.core.quality_gate import evaluate_quality_gate
 from aegisforge.core.provenance import build_evaluation_provenance
+from aegisforge.core.quality_gate import evaluate_quality_gate
 from aegisforge.core.reporting import write_json_report, write_markdown_report
 from aegisforge.core.runner import run_hero_scenario
 from aegisforge.core.target_policy import TargetPolicyError, validate_target
