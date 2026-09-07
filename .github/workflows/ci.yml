@@ -43,8 +43,28 @@ jobs:
       - name: Run tests with warnings treated as errors
         run: python -m pytest -W error
 
+      - name: Generate regression benchmark reports
+        run: |
+          mkdir -p reports
+          aegisforge guard-benchmark
+          aegisforge challenge-benchmark
+
       - name: Enforce benchmark quality thresholds
-        run: aegisforge benchmark-gate
+        run: aegisforge benchmark-gate | tee reports/quality-gate.json
+
+      - name: Upload benchmark evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-evidence-python-${{ matrix.python-version }}
+          path: |
+            reports/guard-benchmark.json
+            reports/guard-benchmark.md
+            reports/challenge-benchmark.json
+            reports/challenge-benchmark.md
+            reports/quality-gate.json
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Verify installed CLI
         run: aegisforge doctor
