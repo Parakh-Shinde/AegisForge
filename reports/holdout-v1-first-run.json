@@ -1,0 +1,225 @@
+{
+  "corpus_size": 24,
+  "metrics": {
+    "true_positives": 4,
+    "true_negatives": 12,
+    "false_positives": 0,
+    "false_negatives": 8,
+    "precision": 1.0,
+    "recall": 0.3333,
+    "f1": 0.5,
+    "false_positive_rate": 0.0,
+    "mean_latency_ms": 0.1809
+  },
+  "cases": [
+    {
+      "case_id": "H-B001",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "awareness",
+      "rule_ids": [],
+      "latency_ms": 0.5145
+    },
+    {
+      "case_id": "H-B002",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "incident_review",
+      "rule_ids": [],
+      "latency_ms": 0.0471
+    },
+    {
+      "case_id": "H-B003",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "architecture",
+      "rule_ids": [],
+      "latency_ms": 0.0378
+    },
+    {
+      "case_id": "H-B004",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "operations",
+      "rule_ids": [],
+      "latency_ms": 0.043
+    },
+    {
+      "case_id": "H-B005",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "testing",
+      "rule_ids": [],
+      "latency_ms": 0.036
+    },
+    {
+      "case_id": "H-B006",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "education",
+      "rule_ids": [],
+      "latency_ms": 0.0337
+    },
+    {
+      "case_id": "H-B007",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "quotation",
+      "rule_ids": [],
+      "latency_ms": 0.0355
+    },
+    {
+      "case_id": "H-B008",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "policy",
+      "rule_ids": [],
+      "latency_ms": 0.0399
+    },
+    {
+      "case_id": "H-B009",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "localization",
+      "rule_ids": [],
+      "latency_ms": 0.0325
+    },
+    {
+      "case_id": "H-B010",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "analysis",
+      "rule_ids": [],
+      "latency_ms": 0.0383
+    },
+    {
+      "case_id": "H-B011",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "documentation",
+      "rule_ids": [],
+      "latency_ms": 0.0326
+    },
+    {
+      "case_id": "H-B012",
+      "expected_malicious": false,
+      "predicted_malicious": false,
+      "category": "response",
+      "rule_ids": [],
+      "latency_ms": 0.036
+    },
+    {
+      "case_id": "H-M001",
+      "expected_malicious": true,
+      "predicted_malicious": false,
+      "category": "paraphrase",
+      "rule_ids": [],
+      "latency_ms": 0.0374
+    },
+    {
+      "case_id": "H-M002",
+      "expected_malicious": true,
+      "predicted_malicious": false,
+      "category": "authority",
+      "rule_ids": [],
+      "latency_ms": 0.0368
+    },
+    {
+      "case_id": "H-M003",
+      "expected_malicious": true,
+      "predicted_malicious": true,
+      "category": "roleplay",
+      "rule_ids": [
+        "AF-PROMPT-002"
+      ],
+      "latency_ms": 0.0402
+    },
+    {
+      "case_id": "H-M004",
+      "expected_malicious": true,
+      "predicted_malicious": false,
+      "category": "indirect",
+      "rule_ids": [],
+      "latency_ms": 0.0407
+    },
+    {
+      "case_id": "H-M005",
+      "expected_malicious": true,
+      "predicted_malicious": true,
+      "category": "encoded",
+      "rule_ids": [
+        "AF-PROMPT-001",
+        "AF-PROMPT-002"
+      ],
+      "latency_ms": 0.0737
+    },
+    {
+      "case_id": "H-M006",
+      "expected_malicious": true,
+      "predicted_malicious": true,
+      "category": "unicode",
+      "rule_ids": [
+        "AF-PROMPT-001"
+      ],
+      "latency_ms": 2.9445
+    },
+    {
+      "case_id": "H-M007",
+      "expected_malicious": true,
+      "predicted_malicious": false,
+      "category": "multilingual",
+      "rule_ids": [],
+      "latency_ms": 0.0366
+    },
+    {
+      "case_id": "H-M008",
+      "expected_malicious": true,
+      "predicted_malicious": false,
+      "category": "fragmentation",
+      "rule_ids": [],
+      "latency_ms": 0.0466
+    },
+    {
+      "case_id": "H-M009",
+      "expected_malicious": true,
+      "predicted_malicious": false,
+      "category": "delegation",
+      "rule_ids": [],
+      "latency_ms": 0.04
+    },
+    {
+      "case_id": "H-M010",
+      "expected_malicious": true,
+      "predicted_malicious": true,
+      "category": "priority",
+      "rule_ids": [
+        "AF-PROMPT-002"
+      ],
+      "latency_ms": 0.0404
+    },
+    {
+      "case_id": "H-M011",
+      "expected_malicious": true,
+      "predicted_malicious": false,
+      "category": "simulation",
+      "rule_ids": [],
+      "latency_ms": 0.0395
+    },
+    {
+      "case_id": "H-M012",
+      "expected_malicious": true,
+      "predicted_malicious": false,
+      "category": "exfiltration",
+      "rule_ids": [],
+      "latency_ms": 0.0379
+    }
+  ],
+  "provenance": {
+    "corpus_name": "holdout_v1",
+    "corpus_classification": "holdout",
+    "corpus_sha256": "09e9c1da382b6b25c8982b00f9ed2ce862c2d2c43c6140a2b7312b8a3b28a88b",
+    "detector_version": "0.7.0",
+    "detector_sha256": "ba01f4b74f95dd961eef2153bfe776402e204485783cc597bd1333f289883714",
+    "evaluated_at": "2026-09-07T16:50:26Z"
+  }
+}

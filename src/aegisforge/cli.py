@@ -10,6 +10,7 @@ from aegisforge.core.ai_evaluation import evaluate_prompt
 from aegisforge.core.benchmark import benchmark_guard, load_corpus, write_benchmark_report
 from aegisforge.core.lab import LabMode
 from aegisforge.core.ollama import OllamaClient, OllamaError
+from aegisforge.core.provenance import build_evaluation_provenance
 from aegisforge.core.quality_gate import evaluate_quality_gate
 from aegisforge.core.reporting import write_json_report, write_markdown_report
 from aegisforge.core.runner import run_hero_scenario
@@ -155,23 +156,82 @@ def challenge_benchmark(
     )
 
 
+@app.command("holdout-benchmark")
+def holdout_benchmark(
+    output: Path = typer.Option(Path("reports"), help="Holdout report directory."),
+) -> None:
+    """Run the versioned holdout once without using it as a tuning gate."""
+    package_directory = Path(__file__).parent
+    corpus_path = package_directory / "data" / "holdout_v1.json"
+    core_directory = package_directory / "core"
+    result = benchmark_guard(load_corpus(corpus_path))
+    provenance = build_evaluation_provenance(
+        corpus_name="holdout_v1",
+        corpus_classification="holdout",
+        corpus_path=corpus_path,
+        detector_version=__version__,
+        detector_paths=(
+            core_directory / "normalization.py",
+            core_directory / "prompt_context.py",
+            core_directory / "prompt_guard.py",
+        ),
+    )
+    payload = result.to_dict()
+    payload["provenance"] = provenance.to_dict()
+    report_path = output / "holdout-v1-first-run.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    typer.echo(
+        json.dumps(
+            {
+                "corpus": "holdout_v1",
+                "classification": "holdout",
+                "metrics": payload["metrics"],
+                "provenance": payload["provenance"],
+                "report": str(report_path),
+            },
+            indent=2,
+        )
+    )
+
+
 @app.command("benchmark-gate")
 def benchmark_gate() -> None:
     """Fail when a regression corpus falls below its quality policy."""
     data_directory = Path(__file__).parent / "data"
-    suites = (
-        ("tuning", load_corpus(data_directory / "prompt_corpus.json")),
-        ("adapted_challenge", load_corpus(data_directory / "challenge_corpus.json")),
+    core_directory = Path(__file__).parent / "core"
+    detector_paths = (
+        core_directory / "normalization.py",
+        core_directory / "prompt_context.py",
+        core_directory / "prompt_guard.py",
     )
-    results = [
-        evaluate_quality_gate(name, benchmark_guard(cases)) for name, cases in suites
-    ]
-    passed = all(result.passed for result in results)
+    suites = (
+        ("tuning", "tuning", data_directory / "prompt_corpus.json"),
+        (
+            "adapted_challenge",
+            "adapted_regression",
+            data_directory / "challenge_corpus.json",
+        ),
+    )
+    results = []
+    for name, classification, corpus_path in suites:
+        gate = evaluate_quality_gate(name, benchmark_guard(load_corpus(corpus_path)))
+        provenance = build_evaluation_provenance(
+            corpus_name=name,
+            corpus_classification=classification,
+            corpus_path=corpus_path,
+            detector_version=__version__,
+            detector_paths=detector_paths,
+        )
+        suite_payload = gate.to_dict()
+        suite_payload["provenance"] = provenance.to_dict()
+        results.append((gate, suite_payload))
+    passed = all(gate.passed for gate, _ in results)
     typer.echo(
         json.dumps(
             {
                 "passed": passed,
-                "suites": [result.to_dict() for result in results],
+                "suites": [payload for _, payload in results],
             },
             indent=2,
         )
