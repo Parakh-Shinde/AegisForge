@@ -43,5 +43,8 @@ jobs:
       - name: Run tests with warnings treated as errors
         run: python -m pytest -W error
 
+      - name: Enforce benchmark quality thresholds
+        run: aegisforge benchmark-gate
+
       - name: Verify installed CLI
         run: aegisforge doctor
