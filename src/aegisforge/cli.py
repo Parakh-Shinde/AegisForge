@@ -156,6 +156,45 @@ def challenge_benchmark(
     )
 
 
+@app.command("holdout-benchmark")
+def holdout_benchmark(
+    output: Path = typer.Option(Path("reports"), help="Holdout report directory."),
+) -> None:
+    """Run the versioned holdout once without using it as a tuning gate."""
+    package_directory = Path(__file__).parent
+    corpus_path = package_directory / "data" / "holdout_v1.json"
+    core_directory = package_directory / "core"
+    result = benchmark_guard(load_corpus(corpus_path))
+    provenance = build_evaluation_provenance(
+        corpus_name="holdout_v1",
+        corpus_classification="holdout",
+        corpus_path=corpus_path,
+        detector_version=__version__,
+        detector_paths=(
+            core_directory / "normalization.py",
+            core_directory / "prompt_context.py",
+            core_directory / "prompt_guard.py",
+        ),
+    )
+    payload = result.to_dict()
+    payload["provenance"] = provenance.to_dict()
+    report_path = output / "holdout-v1-first-run.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    typer.echo(
+        json.dumps(
+            {
+                "corpus": "holdout_v1",
+                "classification": "holdout",
+                "metrics": payload["metrics"],
+                "provenance": payload["provenance"],
+                "report": str(report_path),
+            },
+            indent=2,
+        )
+    )
+
+
 @app.command("benchmark-gate")
 def benchmark_gate() -> None:
     """Fail when a regression corpus falls below its quality policy."""
