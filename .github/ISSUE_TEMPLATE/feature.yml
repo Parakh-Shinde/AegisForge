@@ -1,0 +1,45 @@
+name: Feature request
+description: Propose a lab-safe engineering improvement
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What security-engineering problem should AegisForge solve?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe observable behavior, not only implementation details.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - AI security
+        - API authorization
+        - Detection engineering
+        - Evaluation
+        - Telemetry
+        - Developer experience
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety and trust-boundary impact
+      description: Explain how the proposal preserves authorized, isolated testing.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List tests, evidence, or measurable results that would make this complete.

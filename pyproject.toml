@@ -5,10 +5,31 @@ build-backend = "hatchling.build"
 [project]
 name = "aegisforge"
 version = "0.8.0"
-description = "Lab-safe AI/API adversary emulation and detection validation"
+description = "Lab-safe AI/API adversary emulation and detection-validation platform"
 readme = "README.md"
 requires-python = ">=3.11"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
+authors = [
+  {name = "Parakh Shinde"},
+]
+keywords = [
+  "ai-security",
+  "api-security",
+  "detection-engineering",
+  "prompt-injection",
+  "purple-team",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Framework :: FastAPI",
+  "Intended Audience :: Information Technology",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Security",
+]
 dependencies = [
   "anyio>=4.10,<4.15",
   "fastapi>=0.141.1,<1",
@@ -24,6 +45,13 @@ dev = [
   "pytest-cov>=5,<7",
   "ruff>=0.6,<1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Parakh-Shinde/AegisForge"
+Documentation = "https://github.com/Parakh-Shinde/AegisForge/tree/main/docs"
+Issues = "https://github.com/Parakh-Shinde/AegisForge/issues"
+Releases = "https://github.com/Parakh-Shinde/AegisForge/releases"
+Source = "https://github.com/Parakh-Shinde/AegisForge"
 
 [project.scripts]
 aegisforge = "aegisforge.cli:app"
