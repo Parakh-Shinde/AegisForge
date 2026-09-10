@@ -1,11 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
-
-from aegisforge.core.provenance import sha256_file
-
 
 @dataclass(frozen=True)
 class FrozenFile:
@@ -29,6 +27,12 @@ def load_evaluation_freeze(path: Path) -> EvaluationFreeze:
     )
 
 
+def _canonical_text_sha256(path: Path) -> str:
+    """Hash repository text consistently across LF and CRLF checkouts."""
+    content = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
+
+
 def verify_evaluation_freeze(
     project_root: Path,
     freeze: EvaluationFreeze,
@@ -38,6 +42,6 @@ def verify_evaluation_freeze(
         target = project_root / entry.path
         if not target.is_file():
             violations.append(f"missing: {entry.path}")
-        elif sha256_file(target) != entry.sha256:
+        elif _canonical_text_sha256(target) != entry.sha256:
             violations.append(f"changed: {entry.path}")
     return tuple(violations)
