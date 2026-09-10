@@ -132,6 +132,7 @@ unresolvable targets. Private container ranges require explicit opt-in.
 - [Evaluation protocol](docs/EVALUATION_PROTOCOL.md)
 - [Holdout v1 results](docs/HOLDOUT_V1_RESULTS.md)
 - [Holdout v2 results](docs/HOLDOUT_V2_RESULTS.md)
+- [v0.9 release notes](docs/RELEASE_V0.9.0.md)
 - [CI design](docs/CI.md)
 - [Security automation](docs/SECURITY_AUTOMATION.md)
 - [Rule-tuning evidence](docs/RULE_TUNING.md)
@@ -141,9 +142,11 @@ unresolvable targets. Private container ranges require explicit opt-in.
 
 ## Project status
 
-AegisForge is an active pre-1.0 security-engineering project. v0.8 established independent
-evaluation and CI security gates; v0.9 will focus on hybrid semantic detection and a fresh holdout
-dataset. See [releases](https://github.com/Parakh-Shinde/AegisForge/releases) for stable milestones.
+AegisForge is an active pre-1.0 security-engineering project. v0.9 adds provider-independent
+semantic evidence, deterministic hybrid policy, auditable decision telemetry, comparison reports,
+and a preserved fresh-holdout evaluation. The holdout result documents a material generalization
+gap and guides v0.10 research without inflating performance claims. See
+[releases](https://github.com/Parakh-Shinde/AegisForge/releases) for stable milestones.
 
 ## License
 
