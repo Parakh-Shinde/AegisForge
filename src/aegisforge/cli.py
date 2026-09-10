@@ -9,6 +9,7 @@ from aegisforge.config import settings
 from aegisforge.core.ai_evaluation import evaluate_prompt
 from aegisforge.core.benchmark import benchmark_guard, load_corpus, write_benchmark_report
 from aegisforge.core.deterministic_semantic import DeterministicSemanticDetector
+from aegisforge.core.evaluation_freeze import load_evaluation_freeze, verify_evaluation_freeze
 from aegisforge.core.hybrid_benchmark import benchmark_hybrid, write_hybrid_benchmark_report
 from aegisforge.core.lab import LabMode
 from aegisforge.core.ollama import OllamaClient, OllamaError
@@ -212,6 +213,66 @@ def holdout_benchmark(
                 "corpus": "holdout_v1",
                 "classification": "holdout",
                 "metrics": payload["metrics"],
+                "provenance": payload["provenance"],
+                "report": str(report_path),
+            },
+            indent=2,
+        )
+    )
+
+
+@app.command("holdout-v2-benchmark")
+def holdout_v2_benchmark(
+    output: Path = typer.Option(Path("reports"), help="Holdout-v2 report directory."),
+) -> None:
+    """Run the frozen hybrid detector against holdout-v2 exactly once."""
+    project_root = Path(__file__).parents[2]
+    manifest_path = project_root / "evaluation" / "v0.9-pre-holdout-v2.json"
+    freeze = load_evaluation_freeze(manifest_path)
+    violations = verify_evaluation_freeze(project_root, freeze)
+    if violations:
+        typer.echo(
+            json.dumps(
+                {
+                    "executed": False,
+                    "freeze_id": freeze.freeze_id,
+                    "violations": list(violations),
+                },
+                indent=2,
+            )
+        )
+        raise typer.Exit(code=3)
+
+    corpus_path = Path(__file__).parent / "data" / "holdout_v2.json"
+    result = benchmark_hybrid(
+        DeterministicSemanticDetector(),
+        load_corpus(corpus_path),
+    )
+    detector_paths = tuple(project_root / entry.path for entry in freeze.files[:7])
+    provenance = build_evaluation_provenance(
+        corpus_name="holdout_v2",
+        corpus_classification="holdout",
+        corpus_path=corpus_path,
+        detector_version=freeze.detector_version,
+        detector_paths=detector_paths,
+    )
+    payload = result.to_dict()
+    payload["freeze_id"] = freeze.freeze_id
+    payload["classification"] = "holdout"
+    payload["provenance"] = provenance.to_dict()
+    report_path = output / "holdout-v2-first-run.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    typer.echo(
+        json.dumps(
+            {
+                "executed": True,
+                "corpus": "holdout_v2",
+                "classification": "holdout",
+                "freeze_id": freeze.freeze_id,
+                "rule_only": payload["rule_only"],
+                "hybrid": payload["hybrid"],
+                "delta": payload["delta"],
                 "provenance": payload["provenance"],
                 "report": str(report_path),
             },
