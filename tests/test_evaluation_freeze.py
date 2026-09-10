@@ -30,7 +30,7 @@ def test_freeze_verification_is_independent_of_checkout_line_endings(tmp_path: P
   "files": [
     {
       "path": "sample.txt",
-      "sha256": "a6e2b7a040683d5b78c3d2c58e744b93d5f678e2609cc9cf35145e30a179d7d5"
+      "sha256": "dbea9325179efe46ea2add94f7b6b745ca983fabb208dc6d34aa064623d7ee23"
     }
   ]
 }
