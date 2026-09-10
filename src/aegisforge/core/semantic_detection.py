@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from enum import StrEnum
+from time import perf_counter
 from typing import Protocol, runtime_checkable
 
 
@@ -12,6 +13,10 @@ class SemanticVerdict(StrEnum):
     SUSPICIOUS = "suspicious"
     MALICIOUS = "malicious"
     UNAVAILABLE = "unavailable"
+
+
+class SemanticDetectorError(RuntimeError):
+    """Expected provider failure that can be normalized into safe evidence."""
 
 
 @dataclass(frozen=True)
@@ -25,6 +30,7 @@ class SemanticAssessment:
     detector: str
     detector_version: str
     latency_ms: float
+    schema_version: str = "1.0"
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.score <= 1.0:
@@ -42,6 +48,11 @@ class SemanticAssessment:
     def malicious(self) -> bool:
         return self.verdict is SemanticVerdict.MALICIOUS
 
+    def to_dict(self) -> dict[str, object]:
+        value = asdict(self)
+        value["verdict"] = self.verdict.value
+        return value
+
 
 @runtime_checkable
 class SemanticDetector(Protocol):
@@ -57,3 +68,21 @@ class SemanticDetector(Protocol):
 
     def assess(self, prompt: str) -> SemanticAssessment:
         """Return evidence only; callers retain the final policy decision."""
+
+
+def assess_with_fallback(prompt: str, detector: SemanticDetector) -> SemanticAssessment:
+    """Convert expected provider failures into sanitized, measurable evidence."""
+    started_at = perf_counter()
+    try:
+        return detector.assess(prompt)
+    except (SemanticDetectorError, TimeoutError) as exc:
+        latency_ms = (perf_counter() - started_at) * 1_000
+        return SemanticAssessment(
+            verdict=SemanticVerdict.UNAVAILABLE,
+            score=0.0,
+            category="detector_unavailable",
+            reason=f"Semantic provider failed with {type(exc).__name__}.",
+            detector=detector.name,
+            detector_version=detector.version,
+            latency_ms=latency_ms,
+        )
