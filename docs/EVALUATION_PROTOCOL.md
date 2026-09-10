@@ -30,3 +30,13 @@ create a new freeze identifier, and prepare a fresh holdout corpus.
 The manifest records detector version `0.8.0` because the package remains at that
 released version during v0.9 development. Package version `0.9.0` is assigned only
 after the holdout evidence and release documentation are complete.
+
+## Holdout-v2 execution
+
+`holdout_v2.json` contains 24 balanced synthetic cases created only after the
+`v0.9-pre-holdout-v2` freeze. CI validates its structure but never evaluates it.
+
+Run `aegisforge holdout-v2-benchmark` exactly once after this change is merged.
+The command first verifies every frozen SHA-256 fingerprint and exits without
+evaluation if any mismatch exists. Preserve `reports/holdout-v2-first-run.json`
+without modifying detector logic in response to its results.
