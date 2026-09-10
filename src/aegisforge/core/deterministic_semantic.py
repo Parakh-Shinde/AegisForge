@@ -67,7 +67,7 @@ class DeterministicSemanticDetector:
 
     def assess(self, prompt: str) -> SemanticAssessment:
         started_at = perf_counter()
-        normalized = normalize_prompt(prompt).casefold()
+        normalized = normalize_prompt(prompt).normalized.casefold()
         matches = tuple(signal for signal in _SIGNALS if signal.pattern.search(normalized))
         score = max((signal.weight for signal in matches), default=0.0)
 
