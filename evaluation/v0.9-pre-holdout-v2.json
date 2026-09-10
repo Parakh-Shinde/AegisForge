@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "freeze_id": "v0.9-pre-holdout-v2",
+  "detector_version": "0.8.0",
+  "frozen_at": "2026-09-10T14:40:00Z",
+  "policy": {
+    "review_threshold": 0.6,
+    "block_threshold": 0.85,
+    "review_when_unavailable": true,
+    "malicious_prediction": "block",
+    "review_is_malicious_prediction": false
+  },
+  "files": [
+    {
+      "path": "src/aegisforge/core/normalization.py",
+      "sha256": "b59f335ecdc672fdf7881ac47d5d2c634f97015d54a8d49ed8b093768bdfd594"
+    },
+    {
+      "path": "src/aegisforge/core/prompt_context.py",
+      "sha256": "8bace2d822f7d8aad0fdf20270c9668fb13bb5cec61d0aa9e1074461dfaf3c25"
+    },
+    {
+      "path": "src/aegisforge/core/prompt_guard.py",
+      "sha256": "6fbc33e048fcd1f84c5f4b6a8296b5df4c742ea595cdfeb14028e0abe51d8f40"
+    },
+    {
+      "path": "src/aegisforge/core/semantic_detection.py",
+      "sha256": "09db728b88050e1e8ccc5c16b38524e5b09e1de677c8203a3d32380954d7ec66"
+    },
+    {
+      "path": "src/aegisforge/core/hybrid_detection.py",
+      "sha256": "0f35676c0a4d61aaaeeb0c0aaa6415421fc6410870b290385633cb348c5c8b87"
+    },
+    {
+      "path": "src/aegisforge/core/deterministic_semantic.py",
+      "sha256": "03bab24c383f58ae0c61dab0571cb3e7a06849a18f9115050c1a8f3e431d9fb2"
+    },
+    {
+      "path": "src/aegisforge/core/hybrid_benchmark.py",
+      "sha256": "47e45290eb0c61dee1652774f83bea156bb214aea006e593b50606a9a701fd85"
+    },
+    {
+      "path": "src/aegisforge/data/prompt_corpus.json",
+      "sha256": "35c57ecfc148aaf49b0a7c90c99d4dc79ef6e84e66cd6f4e26aacf5b6298d58b"
+    },
+    {
+      "path": "src/aegisforge/data/challenge_corpus.json",
+      "sha256": "e6a552dc283ce8ae5e6ef86ad7069812308f1704fdb0c5993d2ad53eccbff997"
+    }
+  ],
+  "restrictions": [
+    "Do not change frozen files before the first holdout-v2 run.",
+    "Do not execute holdout-v2 in CI.",
+    "Preserve the complete first-run report and provenance."
+  ]
+}
