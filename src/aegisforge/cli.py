@@ -8,6 +8,8 @@ from aegisforge import __version__
 from aegisforge.config import settings
 from aegisforge.core.ai_evaluation import evaluate_prompt
 from aegisforge.core.benchmark import benchmark_guard, load_corpus, write_benchmark_report
+from aegisforge.core.deterministic_semantic import DeterministicSemanticDetector
+from aegisforge.core.hybrid_benchmark import benchmark_hybrid, write_hybrid_benchmark_report
 from aegisforge.core.lab import LabMode
 from aegisforge.core.ollama import OllamaClient, OllamaError
 from aegisforge.core.provenance import build_evaluation_provenance
@@ -149,6 +151,29 @@ def challenge_benchmark(
                 "corpus": "challenge",
                 "corpus_size": result.corpus_size,
                 "metrics": result.to_dict()["metrics"],
+                "reports": [str(json_path), str(markdown_path)],
+            },
+            indent=2,
+        )
+    )
+
+
+@app.command("hybrid-benchmark")
+def hybrid_benchmark(
+    output: Path = typer.Option(Path("reports"), help="Hybrid benchmark report directory."),
+) -> None:
+    """Compare rule-only and deterministic hybrid detection on regression data."""
+    result = benchmark_hybrid(DeterministicSemanticDetector())
+    json_path = write_hybrid_benchmark_report(result, output / "hybrid-benchmark.json")
+    markdown_path = write_hybrid_benchmark_report(result, output / "hybrid-benchmark.md")
+    typer.echo(
+        json.dumps(
+            {
+                "corpus": "tuning",
+                "corpus_size": result.corpus_size,
+                "rule_only": result.to_dict()["rule_only"],
+                "hybrid": result.to_dict()["hybrid"],
+                "delta": result.to_dict()["delta"],
                 "reports": [str(json_path), str(markdown_path)],
             },
             indent=2,

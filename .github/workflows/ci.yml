@@ -48,6 +48,7 @@ jobs:
           mkdir -p reports
           aegisforge guard-benchmark
           aegisforge challenge-benchmark
+          aegisforge hybrid-benchmark
 
       - name: Enforce benchmark quality thresholds
         run: aegisforge benchmark-gate | tee reports/quality-gate.json
@@ -62,6 +63,8 @@ jobs:
             reports/guard-benchmark.md
             reports/challenge-benchmark.json
             reports/challenge-benchmark.md
+            reports/hybrid-benchmark.json
+            reports/hybrid-benchmark.md
             reports/quality-gate.json
           if-no-files-found: warn
           retention-days: 30

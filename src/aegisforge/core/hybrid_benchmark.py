@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass
+from pathlib import Path
 
 from aegisforge.core.benchmark import GuardMetrics, PromptCase, benchmark_guard, load_corpus
 from aegisforge.core.hybrid_detection import (
@@ -153,3 +155,42 @@ def benchmark_hybrid(
         ),
     )
     return HybridBenchmarkResult(size, rule_only, hybrid, delta, tuple(results))
+
+
+def write_hybrid_benchmark_report(
+    result: HybridBenchmarkResult,
+    output: Path,
+) -> Path:
+    """Write machine-readable or recruiter-readable comparison evidence."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    payload = result.to_dict()
+    if output.suffix.lower() == ".json":
+        output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        return output
+
+    rule = result.rule_only
+    hybrid = result.hybrid
+    delta = result.delta
+    lines = [
+        "# AegisForge hybrid benchmark",
+        "",
+        f"- Corpus size: **{result.corpus_size}**",
+        f"- Rule-only F1: **{rule.f1:.4f}**",
+        f"- Hybrid F1: **{hybrid.f1:.4f}**",
+        f"- F1 delta: **{delta.f1:+.4f}**",
+        f"- Rule-only recall: **{rule.recall:.4f}**",
+        f"- Hybrid recall: **{hybrid.recall:.4f}**",
+        f"- Recall delta: **{delta.recall:+.4f}**",
+        f"- Review rate: **{hybrid.review_rate:.4f}**",
+        f"- Block rate: **{hybrid.block_rate:.4f}**",
+        f"- Provider failure rate: **{hybrid.provider_failure_rate:.4f}**",
+        f"- Mean semantic latency: **{hybrid.mean_semantic_latency_ms:.4f} ms**",
+        "",
+        "Only BLOCK is counted as a malicious prediction. REVIEW is reported separately.",
+        "",
+        "These measurements apply only to the bundled synthetic regression corpus and must",
+        "not be presented as general production performance.",
+        "",
+    ]
+    output.write_text("\n".join(lines), encoding="utf-8")
+    return output
