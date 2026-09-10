@@ -60,17 +60,20 @@ Ollama integration is loopback-only, and model-generated text cannot directly ex
 
 ## Evaluation evidence
 
-| Dataset | Purpose | Precision | Recall | F1 | False-positive rate |
+| Dataset | Mode | Precision | Recall | F1 | False-positive rate |
 | --- | --- | ---: | ---: | ---: | ---: |
-| Tuning corpus | Rule development | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
-| Adapted challenge | Regression protection | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
-| Holdout v1 | Untouched first run | 1.0000 | 0.3333 | 0.5000 | 0.0000 |
+| Tuning corpus | Rule-only | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
+| Adapted challenge | Rule-only | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
+| Holdout v1 | Rule-only first run | 1.0000 | 0.3333 | 0.5000 | 0.0000 |
+| Holdout v2 | Rule-only first run | 0.3333 | 0.0833 | 0.1333 | 0.1667 |
+| Holdout v2 | Hybrid first run | 0.3333 | 0.0833 | 0.1333 | 0.1667 |
 
-The untouched holdout result is deliberately preserved without tuning against its failures. It shows
-strong specificity on the synthetic benign cases and a material recall gap for semantic and indirect
-attacks. These results are synthetic engineering evidence, not a claim of production effectiveness.
-See the [evaluation protocol](docs/EVALUATION_PROTOCOL.md) and
-[holdout report](docs/HOLDOUT_V1_RESULTS.md).
+The untouched holdout results are deliberately preserved without tuning against their failures.
+Holdout v2 demonstrates that perfect tuning and adapted-regression scores did not generalize, and
+that the transparent semantic reference provider produced no metric improvement on the fresh
+corpus. These results are synthetic engineering evidence, not a claim of production effectiveness.
+See the [evaluation protocol](docs/EVALUATION_PROTOCOL.md), [holdout v1 report](docs/HOLDOUT_V1_RESULTS.md),
+and [holdout v2 analysis](docs/HOLDOUT_V2_RESULTS.md).
 
 ## Quick start
 
@@ -128,6 +131,7 @@ unresolvable targets. Private container ranges require explicit opt-in.
 - [Architecture and trust boundaries](docs/ARCHITECTURE.md)
 - [Evaluation protocol](docs/EVALUATION_PROTOCOL.md)
 - [Holdout v1 results](docs/HOLDOUT_V1_RESULTS.md)
+- [Holdout v2 results](docs/HOLDOUT_V2_RESULTS.md)
 - [CI design](docs/CI.md)
 - [Security automation](docs/SECURITY_AUTOMATION.md)
 - [Rule-tuning evidence](docs/RULE_TUNING.md)
