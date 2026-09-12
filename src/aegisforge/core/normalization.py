@@ -36,14 +36,18 @@ def normalize_prompt(prompt: str, *, max_chars: int = 20_000) -> NormalizedPromp
         transformations.append("unicode_nfkc")
     if mapped != nfkc:
         transformations.append("confusable_mapping")
-    decoded: list[str] = []
+
+    inspection_variants: list[str] = []
     for match in _QUOTED_FRAGMENT_CHAIN.finditer(mapped):
         parts = _QUOTED_FRAGMENT.findall(match.group("chain"))
         reconstructed = mapped[: match.start()] + "".join(parts) + mapped[match.end() :]
-        if reconstructed not in decoded:
-            decoded.append(" ".join(reconstructed.split()))
-    if decoded:
+        normalized_variant = " ".join(reconstructed.split())
+        if normalized_variant not in inspection_variants:
+            inspection_variants.append(normalized_variant)
+    if inspection_variants:
         transformations.append("quoted_fragment_join")
+
+    decoded_base64 = False
     for match in _BASE64.finditer(mapped):
         token = match.group(1)
         if len(token) > 4096:
@@ -53,14 +57,14 @@ def normalize_prompt(prompt: str, *, max_chars: int = 20_000) -> NormalizedPromp
         except (binascii.Error, UnicodeDecodeError):
             continue
         if value.isprintable():
-            decoded.append(value[:4096])
-    if any(_BASE64.search(segment) is None for segment in decoded):
-        pass
-    if any(match for match in _BASE64.finditer(mapped)):
+            inspection_variants.append(value[:4096])
+            decoded_base64 = True
+    if decoded_base64:
         transformations.append("base64_decode")
+
     return NormalizedPrompt(
         bounded,
         " ".join(mapped.split()),
-        tuple(decoded),
+        tuple(inspection_variants),
         tuple(transformations),
     )
