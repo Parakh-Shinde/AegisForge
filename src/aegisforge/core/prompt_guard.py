@@ -130,6 +130,30 @@ _RULES: tuple[tuple[str, str, str, re.Pattern[str], str], ...] = (
         ),
         "Input delegates protected-data extraction to another agent.",
     ),
+    (
+        "AF-PROMPT-011",
+        "high",
+        "fragmented_override",
+        re.compile(
+            r"\b(disregard|ignore|bypass)\b.{0,40}"
+            r"\b(safeguard|control|restriction|rule|policy)s?\b",
+            re.I,
+        ),
+        "Input reconstructs an instruction to bypass trusted safeguards.",
+    ),
+    (
+        "AF-PROMPT-012",
+        "high",
+        "persistent_override",
+        re.compile(
+            r"\b(treat|regard|record)\b.{0,32}\b(this|following)\b.{0,24}"
+            r"\b(request|message|instruction)\b.{0,40}\b(permanent|persistent|lasting)\b"
+            r".{0,32}\b(policy|rule|instruction)\s+(update|change)\b.{0,64}"
+            r"\b(apply|use|enforce|follow)\b.{0,48}\b(future|later|subsequent)\b",
+            re.I,
+        ),
+        "Input attempts to persist an unauthorized policy change across future turns.",
+    ),
 )
 
 _EDUCATIONAL_CONTEXT = re.compile(
