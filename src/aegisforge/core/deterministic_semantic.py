@@ -62,6 +62,30 @@ _SIGNALS = (
         0.90,
     ),
     _Signal(
+        "indirect_instruction",
+        re.compile(
+            r"\b(?:attached|retrieved|external)\b.{0,40}"
+            r"\b(?:knowledge entry|document|content|message)\b.{0,48}"
+            r"\b(?:authoritative|trusted|higher priority)\b.{0,80}"
+            r"\b(?:carry out|execute|follow|perform)\b.{0,40}"
+            r"\b(?:embedded|included|contained)\b.{0,24}"
+            r"\b(?:action|instruction|request)s?\b"
+        ),
+        0.90,
+    ),
+    _Signal(
+        "delegated_extraction",
+        re.compile(
+            r"\b(?:ask|tell|instruct|have)\b.{0,32}"
+            r"\b(?:secondary|another|subordinate)\b.{0,20}"
+            r"\b(?:agent|model|assistant)\b.{0,48}"
+            r"\b(?:retrieve|reveal|obtain|return|display)\b.{0,48}"
+            r"\b(?:protected|hidden|private|confidential)\b.{0,24}"
+            r"\b(?:configuration|instruction|prompt|secret|data)s?\b"
+        ),
+        0.90,
+    ),
+    _Signal(
         "tool_abuse",
         re.compile(
             r"\b(?:execute|invoke|run|call)\b.{0,48}"
@@ -85,7 +109,7 @@ class DeterministicSemanticDetector:
 
     @property
     def version(self) -> str:
-        return "1.1"
+        return "1.2"
 
     def assess(self, prompt: str) -> SemanticAssessment:
         started_at = perf_counter()
