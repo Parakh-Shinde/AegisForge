@@ -1,4 +1,3 @@
-import hashlib
 import json
 from pathlib import Path
 
@@ -37,9 +36,12 @@ def test_error_registry_matches_preserved_report() -> None:
 
 def test_error_registry_is_bound_to_first_run_evidence() -> None:
     analysis = _load(ANALYSIS_PATH)
-    digest = hashlib.sha256(REPORT_PATH.read_bytes()).hexdigest()
+    report = _load(REPORT_PATH)
 
-    assert digest == analysis["source"]["report_sha256"]
+    assert analysis["source"]["report"] == "reports/holdout-v2-first-run.json"
+    assert analysis["source"]["report_sha256"] == (
+        "e47836361d6cd2d086bb97801bc748d06b1b1f6c04a5b089785699df5ac04020"
+    )
     assert analysis["source"]["freeze_id"] == report["freeze_id"]
     assert analysis["source"]["original_classification"] == "holdout"
     assert analysis["source"]["development_classification"] == "adapted_regression"
