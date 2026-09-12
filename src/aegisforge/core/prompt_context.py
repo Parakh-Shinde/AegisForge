@@ -10,6 +10,8 @@ class PromptContext:
     defensive_guidance: bool
     secure_architecture: bool
     credential_operations: bool
+    security_education: bool
+    incident_response: bool
 
 
 def classify_context(text: str) -> PromptContext:
@@ -25,5 +27,22 @@ def classify_context(text: str) -> PromptContext:
         ),
         credential_operations=bool(
             re.search(r"\b(rotation|rotate|expired|runbook)\b", text, re.I)
+        ),
+        security_education=bool(
+            re.search(
+                r"^(explain|describe|analyze|compare|why|how)\b.{0,120}"
+                r"\b(warning sign|risk|indicator|attempt|attack)\b",
+                text,
+                re.I,
+            )
+        ),
+        incident_response=bool(
+            re.search(
+                r"^(summarize|review|analyze)\b.{0,120}\b(evidence|log|alert|incident)\b"
+                r".{0,120}\b(attempted|observed|reported)\b.{0,120}"
+                r"\b(do not|don't|without)\s+(execute|run|invoke|call)\b",
+                text,
+                re.I,
+            )
         ),
     )
