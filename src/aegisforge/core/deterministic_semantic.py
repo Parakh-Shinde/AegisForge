@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from time import perf_counter
 
 from aegisforge.core.normalization import normalize_prompt
+from aegisforge.core.prompt_context import classify_context
 from aegisforge.core.semantic_detection import SemanticAssessment, SemanticVerdict
 
 
@@ -91,8 +92,13 @@ class DeterministicSemanticDetector:
         normalized = normalize_prompt(prompt).normalized.casefold()
         matches = tuple(signal for signal in _SIGNALS if signal.pattern.search(normalized))
         score = max((signal.weight for signal in matches), default=0.0)
+        context = classify_context(normalized)
 
-        if matches and _DEFENSIVE_CONTEXT.search(normalized):
+        if matches and (
+            _DEFENSIVE_CONTEXT.search(normalized)
+            or context.security_education
+            or context.incident_response
+        ):
             score = min(score, 0.55)
 
         if score >= 0.85:
