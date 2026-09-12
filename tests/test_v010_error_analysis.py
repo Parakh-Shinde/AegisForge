@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-
 PROJECT_ROOT = Path(__file__).parents[1]
 ANALYSIS_PATH = PROJECT_ROOT / "evaluation" / "v0.10-error-analysis.json"
 REPORT_PATH = PROJECT_ROOT / "reports" / "holdout-v2-first-run.json"
