@@ -153,7 +153,12 @@ def inspect_prompt(prompt: str) -> tuple[GuardFinding, ...]:
                 continue
             if context.quoted_or_translated:
                 continue
-            if category in {"secret_extraction", "authority_extraction"} and (
+            if category in {
+                "secret_extraction",
+                "authority_extraction",
+                "indirect_instruction",
+                "delegated_extraction",
+            } and (
                 context.defensive_guidance
                 or context.credential_operations
                 or context.security_education
