@@ -15,7 +15,7 @@ def test_reference_detector_is_transparent_and_deterministic() -> None:
     assert first.score == second.score
     assert first.category == second.category
     assert first.detector == "aegisforge-deterministic-semantic"
-    assert first.detector_version == "1.0"
+    assert first.detector_version == "1.1"
 
 
 def test_reference_detector_recognizes_defensive_context() -> None:
