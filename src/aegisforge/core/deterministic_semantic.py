@@ -86,6 +86,26 @@ _SIGNALS = (
         0.90,
     ),
     _Signal(
+        "fragmented_override",
+        re.compile(
+            r"\b(?:disregard|ignore|bypass)\b.{0,40}"
+            r"\b(?:safeguard|control|restriction|rule|policy)s?\b"
+        ),
+        0.90,
+    ),
+    _Signal(
+        "persistent_override",
+        re.compile(
+            r"\b(?:treat|regard|record)\b.{0,32}\b(?:this|following)\b.{0,24}"
+            r"\b(?:request|message|instruction)\b.{0,40}"
+            r"\b(?:permanent|persistent|lasting)\b.{0,32}"
+            r"\b(?:policy|rule|instruction)\s+(?:update|change)\b.{0,64}"
+            r"\b(?:apply|use|enforce|follow)\b.{0,48}"
+            r"\b(?:future|later|subsequent)\b"
+        ),
+        0.90,
+    ),
+    _Signal(
         "tool_abuse",
         re.compile(
             r"\b(?:execute|invoke|run|call)\b.{0,48}"
@@ -109,7 +129,7 @@ class DeterministicSemanticDetector:
 
     @property
     def version(self) -> str:
-        return "1.2"
+        return "1.3"
 
     def assess(self, prompt: str) -> SemanticAssessment:
         started_at = perf_counter()
