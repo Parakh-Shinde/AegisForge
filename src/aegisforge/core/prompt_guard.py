@@ -99,10 +99,14 @@ def inspect_prompt(prompt: str) -> tuple[GuardFinding, ...]:
             if context.quoted_or_translated:
                 continue
             if category == "secret_extraction" and (
-                context.defensive_guidance or context.credential_operations
+                context.defensive_guidance
+                or context.credential_operations
+                or context.security_education
             ):
                 continue
-            if category == "tool_abuse" and context.secure_architecture:
+            if category == "tool_abuse" and (
+                context.secure_architecture or context.incident_response
+            ):
                 continue
             finding = GuardFinding(rule_id, severity, category, reason)
             if finding not in findings:
