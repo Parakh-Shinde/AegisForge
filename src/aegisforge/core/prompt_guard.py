@@ -101,6 +101,35 @@ _RULES: tuple[tuple[str, str, str, re.Pattern[str], str], ...] = (
         ),
         "Input uses claimed authority to request protected initialization data.",
     ),
+    (
+        "AF-PROMPT-009",
+        "high",
+        "indirect_instruction",
+        re.compile(
+            r"\b(attached|retrieved|external)\b.{0,40}"
+            r"\b(knowledge entry|document|content|message)\b.{0,48}"
+            r"\b(authoritative|trusted|higher priority)\b.{0,80}"
+            r"\b(carry out|execute|follow|perform)\b.{0,40}"
+            r"\b(embedded|included|contained)\b.{0,24}"
+            r"\b(action|instruction|request)s?\b",
+            re.I,
+        ),
+        "Input treats instructions from untrusted content as execution authority.",
+    ),
+    (
+        "AF-PROMPT-010",
+        "high",
+        "delegated_extraction",
+        re.compile(
+            r"\b(ask|tell|instruct|have)\b.{0,32}"
+            r"\b(secondary|another|subordinate)\b.{0,20}\b(agent|model|assistant)\b"
+            r".{0,48}\b(retrieve|reveal|obtain|return|display)\b.{0,48}"
+            r"\b(protected|hidden|private|confidential)\b.{0,24}"
+            r"\b(configuration|instruction|prompt|secret|data)s?\b",
+            re.I,
+        ),
+        "Input delegates protected-data extraction to another agent.",
+    ),
 )
 
 _EDUCATIONAL_CONTEXT = re.compile(
