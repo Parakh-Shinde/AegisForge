@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from aegisforge.core.evaluation_freeze import (
@@ -6,16 +7,34 @@ from aegisforge.core.evaluation_freeze import (
 )
 
 
-def test_v09_pre_holdout_freeze_matches_repository() -> None:
+def test_v09_freeze_is_sealed_by_preserved_first_run() -> None:
     project_root = Path(__file__).parents[1]
     manifest_path = project_root / "evaluation" / "v0.9-pre-holdout-v2.json"
+    report_path = project_root / "reports" / "holdout-v2-first-run.json"
 
     freeze = load_evaluation_freeze(manifest_path)
+    report = json.loads(report_path.read_text(encoding="utf-8"))
 
     assert freeze.freeze_id == "v0.9-pre-holdout-v2"
     assert freeze.detector_version == "0.8.0"
     assert len(freeze.files) == 9
-    assert verify_evaluation_freeze(project_root, freeze) == ()
+    assert len({entry.path for entry in freeze.files}) == len(freeze.files)
+    assert all(len(entry.sha256) == 64 for entry in freeze.files)
+    assert report["freeze_id"] == freeze.freeze_id
+    assert report["provenance"]["detector_version"] == freeze.detector_version
+
+
+def test_freeze_verification_detects_post_freeze_changes() -> None:
+    project_root = Path(__file__).parents[1]
+    manifest_path = project_root / "evaluation" / "v0.9-pre-holdout-v2.json"
+
+    freeze = load_evaluation_freeze(manifest_path)
+    violations = verify_evaluation_freeze(project_root, freeze)
+
+    assert set(violations) == {
+        "changed: src/aegisforge/core/prompt_context.py",
+        "changed: src/aegisforge/core/prompt_guard.py",
+    }
 
 
 def test_freeze_verification_is_independent_of_checkout_line_endings(tmp_path: Path) -> None:
