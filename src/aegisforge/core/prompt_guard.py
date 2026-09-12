@@ -75,6 +75,32 @@ _RULES: tuple[tuple[str, str, str, re.Pattern[str], str], ...] = (
         ),
         "Input contains a transliterated instruction-override request.",
     ),
+    (
+        "AF-PROMPT-007",
+        "high",
+        "objective_replacement",
+        re.compile(
+            r"\b(set aside|move past)\b.{0,48}\b(governing|trusted)\b.{0,24}"
+            r"\b(direction|instruction|policy)s?\b.{0,64}\b(adopt|follow|use)\b"
+            r".{0,40}\b(objective|instruction|request)\b",
+            re.I,
+        ),
+        "Input replaces governing directions with an untrusted objective.",
+    ),
+    (
+        "AF-PROMPT-008",
+        "high",
+        "authority_extraction",
+        re.compile(
+            r"\b(administrator|developer|owner|security team)\b.{0,64}"
+            r"\b(approved|authorized|granted)\b.{0,48}\b(exception|access|permission)\b"
+            r".{0,96}\b(provide|reveal|show|return|disclose)\b.{0,48}"
+            r"\b(confidential|protected|hidden|private)\b.{0,32}"
+            r"\b(initialization text|instruction|configuration|prompt|data)s?\b",
+            re.I,
+        ),
+        "Input uses claimed authority to request protected initialization data.",
+    ),
 )
 
 _EDUCATIONAL_CONTEXT = re.compile(
@@ -98,7 +124,7 @@ def inspect_prompt(prompt: str) -> tuple[GuardFinding, ...]:
                 continue
             if context.quoted_or_translated:
                 continue
-            if category == "secret_extraction" and (
+            if category in {"secret_extraction", "authority_extraction"} and (
                 context.defensive_guidance
                 or context.credential_operations
                 or context.security_education
