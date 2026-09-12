@@ -40,6 +40,27 @@ _SIGNALS = (
         0.90,
     ),
     _Signal(
+        "objective_replacement",
+        re.compile(
+            r"\b(?:set aside|move past)\b.{0,48}\b(?:governing|trusted)\b.{0,24}"
+            r"\b(?:direction|instruction|policy)s?\b.{0,64}\b(?:adopt|follow|use)\b"
+            r".{0,40}\b(?:objective|instruction|request)\b"
+        ),
+        0.90,
+    ),
+    _Signal(
+        "authority_extraction",
+        re.compile(
+            r"\b(?:administrator|developer|owner|security team)\b.{0,64}"
+            r"\b(?:approved|authorized|granted)\b.{0,48}"
+            r"\b(?:exception|access|permission)\b.{0,96}"
+            r"\b(?:provide|reveal|show|return|disclose)\b.{0,48}"
+            r"\b(?:confidential|protected|hidden|private)\b.{0,32}"
+            r"\b(?:initialization text|instruction|configuration|prompt|data)s?\b"
+        ),
+        0.90,
+    ),
+    _Signal(
         "tool_abuse",
         re.compile(
             r"\b(?:execute|invoke|run|call)\b.{0,48}"
@@ -63,7 +84,7 @@ class DeterministicSemanticDetector:
 
     @property
     def version(self) -> str:
-        return "1.0"
+        return "1.1"
 
     def assess(self, prompt: str) -> SemanticAssessment:
         started_at = perf_counter()
