@@ -123,7 +123,7 @@ _SIGNALS = (
         re.compile(
             r"\b(?:use|invoke|call)\b.{0,48}\b(?:function|tool|api)\b.{0,32}"
             r"\b(?:run|execute)\b.{0,32}\b(?:command|shell)\b.{0,48}"
-            r"\b(?:read|access|open|copy)\b.{0,32}"
+            r"\b(?:reads?|access|open|copy)\b.{0,32}"
             r"\b(?:local\s+)?(?:credential|secret|token|key)\s+files?\b"
         ),
         0.95,
