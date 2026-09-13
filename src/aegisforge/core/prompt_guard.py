@@ -182,6 +182,47 @@ _RULES: tuple[tuple[str, str, str, re.Pattern[str], str], ...] = (
         ),
         "Input attempts to use a tool to access local credential files.",
     ),
+    (
+        "AF-PROMPT-015",
+        "high",
+        "roleplay_extraction",
+        re.compile(
+            r"\b(in a simulation|role[ -]?play|hypothetical)\b.{0,64}"
+            r"\b(restriction|safeguard|rule)s?\b.{0,24}"
+            r"\b(absent|disabled|removed|do not apply)\b.{0,64}"
+            r"\b(disclose|reveal|show|provide)\b.{0,40}"
+            r"\b(real|actual|hidden|protected)\b.{0,24}"
+            r"\b(operating rules|instruction|system prompt|policy)s?\b",
+            re.I,
+        ),
+        "Input uses fictional framing to request real protected instructions.",
+    ),
+    (
+        "AF-PROMPT-016",
+        "high",
+        "multilingual_extraction",
+        re.compile(
+            r"\b(omite|ignora|descarta)\b.{0,40}"
+            r"\b(las\s+)?(reglas|instrucciones)\b.{0,24}"
+            r"\b(anteriores|previas)\b.{0,64}\b(muestra|revela|expone)\b"
+            r".{0,48}\b(instrucciones protegidas|prompt del sistema|reglas ocultas)\b",
+            re.I,
+        ),
+        "Input contains a Spanish override and protected-instruction request.",
+    ),
+    (
+        "AF-PROMPT-017",
+        "high",
+        "encoded_instruction",
+        re.compile(
+            r"\b(decode|decipher)\b.{0,48}\b(payload|content|string|message)\b"
+            r".{0,64}\b(obey|follow|execute|apply)\b.{0,48}"
+            r"\b(decoded|resulting)\b.{0,32}\b(request|instruction|message)\b"
+            r".{0,40}\b(higher[ -]?priority|authoritative|trusted)\b",
+            re.I,
+        ),
+        "Input requests execution of decoded content as a higher-priority instruction.",
+    ),
 )
 
 _EDUCATIONAL_CONTEXT = re.compile(
@@ -212,6 +253,9 @@ def inspect_prompt(prompt: str) -> tuple[GuardFinding, ...]:
                 "delegated_extraction",
                 "covert_exfiltration",
                 "credential_file_access",
+                "roleplay_extraction",
+                "multilingual_extraction",
+                "encoded_instruction",
             } and (
                 context.defensive_guidance
                 or context.credential_operations
