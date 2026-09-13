@@ -129,6 +129,39 @@ _SIGNALS = (
         0.95,
     ),
     _Signal(
+        "roleplay_extraction",
+        re.compile(
+            r"\b(?:in a simulation|role[ -]?play|hypothetical)\b.{0,64}"
+            r"\b(?:restriction|safeguard|rule)s?\b.{0,24}"
+            r"\b(?:absent|disabled|removed|do not apply)\b.{0,64}"
+            r"\b(?:disclose|reveal|show|provide)\b.{0,40}"
+            r"\b(?:real|actual|hidden|protected)\b.{0,24}"
+            r"\b(?:operating rules|instruction|system prompt|policy)s?\b"
+        ),
+        0.90,
+    ),
+    _Signal(
+        "multilingual_extraction",
+        re.compile(
+            r"\b(?:omite|ignora|descarta)\b.{0,40}"
+            r"\b(?:las\s+)?(?:reglas|instrucciones)\b.{0,24}"
+            r"\b(?:anteriores|previas)\b.{0,64}\b(?:muestra|revela|expone)\b"
+            r".{0,48}\b(?:instrucciones protegidas|prompt del sistema|reglas ocultas)\b"
+        ),
+        0.90,
+    ),
+    _Signal(
+        "encoded_instruction",
+        re.compile(
+            r"\b(?:decode|decipher)\b.{0,48}\b(?:payload|content|string|message)\b"
+            r".{0,64}\b(?:obey|follow|execute|apply)\b.{0,48}"
+            r"\b(?:decoded|resulting)\b.{0,32}"
+            r"\b(?:request|instruction|message)\b.{0,40}"
+            r"\b(?:higher[ -]?priority|authoritative|trusted)\b"
+        ),
+        0.90,
+    ),
+    _Signal(
         "tool_abuse",
         re.compile(
             r"\b(?:execute|invoke|run|call)\b.{0,48}"
@@ -152,7 +185,7 @@ class DeterministicSemanticDetector:
 
     @property
     def version(self) -> str:
-        return "1.4"
+        return "1.5"
 
     def assess(self, prompt: str) -> SemanticAssessment:
         started_at = perf_counter()
