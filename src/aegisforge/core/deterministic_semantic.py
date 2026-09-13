@@ -204,6 +204,7 @@ class DeterministicSemanticDetector:
 
         if matches and (
             _DEFENSIVE_CONTEXT.search(normalized)
+            or context.quoted_or_translated
             or context.security_education
             or context.incident_response
         ):
