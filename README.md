@@ -67,11 +67,15 @@ Ollama integration is loopback-only, and model-generated text cannot directly ex
 | Holdout v1 | Rule-only first run | 1.0000 | 0.3333 | 0.5000 | 0.0000 |
 | Holdout v2 | Rule-only first run | 0.3333 | 0.0833 | 0.1333 | 0.1667 |
 | Holdout v2 | Hybrid first run | 0.3333 | 0.0833 | 0.1333 | 0.1667 |
+| Adapted holdout v2 | Rule-only regression | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
+| Adapted holdout v2 | Hybrid regression | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
 
 The untouched holdout results are deliberately preserved without tuning against their failures.
 Holdout v2 demonstrates that perfect tuning and adapted-regression scores did not generalize, and
 that the transparent semantic reference provider produced no metric improvement on the fresh
-corpus. These results are synthetic engineering evidence, not a claim of production effectiveness.
+corpus. v0.10 remediates the recorded errors and gates them as adapted regression cases; those
+perfect adapted scores are not independent evaluation. These results are synthetic engineering
+evidence, not a claim of production effectiveness.
 See the [evaluation protocol](docs/EVALUATION_PROTOCOL.md), [holdout v1 report](docs/HOLDOUT_V1_RESULTS.md),
 and [holdout v2 analysis](docs/HOLDOUT_V2_RESULTS.md).
 
@@ -102,6 +106,7 @@ Run the safe hero comparison:
 aegisforge demo --mode vulnerable
 aegisforge demo --mode secure
 aegisforge benchmark-gate
+aegisforge v010-regression-gate
 ```
 
 Run the local API:
@@ -132,6 +137,7 @@ unresolvable targets. Private container ranges require explicit opt-in.
 - [Evaluation protocol](docs/EVALUATION_PROTOCOL.md)
 - [Holdout v1 results](docs/HOLDOUT_V1_RESULTS.md)
 - [Holdout v2 results](docs/HOLDOUT_V2_RESULTS.md)
+- [v0.10 release notes](docs/RELEASE_V0.10.0.md)
 - [v0.9 release notes](docs/RELEASE_V0.9.0.md)
 - [CI design](docs/CI.md)
 - [Security automation](docs/SECURITY_AUTOMATION.md)
@@ -142,10 +148,11 @@ unresolvable targets. Private container ranges require explicit opt-in.
 
 ## Project status
 
-AegisForge is an active pre-1.0 security-engineering project. v0.9 adds provider-independent
-semantic evidence, deterministic hybrid policy, auditable decision telemetry, comparison reports,
-and a preserved fresh-holdout evaluation. The holdout result documents a material generalization
-gap and guides v0.10 research without inflating performance claims. See
+AegisForge is an active pre-1.0 security-engineering project. v0.10 remediates the
+documented holdout-v2 errors with bounded defensive-context handling, compositional override,
+indirect delegation, fragmentation, persistence, data/tool abuse, exfiltration, framing, and
+multilingual detection. A strict adapted-regression gate prevents those failures from returning
+without relabeling the result as independent evaluation. See
 [releases](https://github.com/Parakh-Shinde/AegisForge/releases) for stable milestones.
 
 ## License
