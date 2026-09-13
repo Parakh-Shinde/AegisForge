@@ -219,7 +219,9 @@ def inspect_prompt(prompt: str) -> tuple[GuardFinding, ...]:
             ):
                 continue
             if category == "tool_abuse" and (
-                context.secure_architecture or context.incident_response
+                context.secure_architecture
+                or context.incident_response
+                or context.security_education
             ):
                 continue
             finding = GuardFinding(rule_id, severity, category, reason)
