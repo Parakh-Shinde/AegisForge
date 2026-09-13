@@ -155,28 +155,32 @@ _RULES: tuple[tuple[str, str, str, re.Pattern[str], str], ...] = (
         "Input attempts to persist an unauthorized policy change across future turns.",
     ),
     (
-        "AF-PROMPT-011",
+        "AF-PROMPT-013",
         "high",
-        "fragmented_override",
+        "covert_exfiltration",
         re.compile(
-            r"\b(disregard|ignore|bypass)\b.{0,40}"
-            r"\b(safeguard|control|restriction|rule|policy)s?\b",
+            r"\b(return|provide|send|transmit)\b.{0,48}"
+            r"\b(private|protected|confidential|hidden)\b.{0,32}"
+            r"\b(setup text|initialization text|system prompt|instruction)s?\b.{0,64}"
+            r"\b(one character|one token|small chunks?)\b.{0,32}\b(at a time|separately)\b"
+            r".{0,64}\b(filter|detector|monitor)s?\b.{0,24}"
+            r"\b(cannot|can't|avoid|bypass|evade)\b",
             re.I,
         ),
-        "Input reconstructs an instruction to bypass trusted safeguards.",
+        "Input requests segmented protected data to evade content inspection.",
     ),
     (
-        "AF-PROMPT-012",
-        "high",
-        "persistent_override",
+        "AF-PROMPT-014",
+        "critical",
+        "credential_file_access",
         re.compile(
-            r"\b(treat|regard|record)\b.{0,32}\b(this|following)\b.{0,24}"
-            r"\b(request|message|instruction)\b.{0,40}\b(permanent|persistent|lasting)\b"
-            r".{0,32}\b(policy|rule|instruction)\s+(update|change)\b.{0,64}"
-            r"\b(apply|use|enforce|follow)\b.{0,48}\b(future|later|subsequent)\b",
+            r"\b(use|invoke|call)\b.{0,48}\b(function|tool|api)\b.{0,32}"
+            r"\b(run|execute)\b.{0,32}\b(command|shell)\b.{0,48}"
+            r"\b(read|access|open|copy)\b.{0,32}"
+            r"\b(local\s+)?(credential|secret|token|key)\s+files?\b",
             re.I,
         ),
-        "Input attempts to persist an unauthorized policy change across future turns.",
+        "Input attempts to use a tool to access local credential files.",
     ),
 )
 
@@ -206,6 +210,8 @@ def inspect_prompt(prompt: str) -> tuple[GuardFinding, ...]:
                 "authority_extraction",
                 "indirect_instruction",
                 "delegated_extraction",
+                "covert_exfiltration",
+                "credential_file_access",
             } and (
                 context.defensive_guidance
                 or context.credential_operations
