@@ -36,7 +36,7 @@ def test_fragmented_and_persistent_overrides_block(
     assert {finding.rule_id for finding in findings} == {rule_id}
     assert assessment.verdict is SemanticVerdict.MALICIOUS
     assert assessment.category == category
-    assert assessment.detector_version == "1.3"
+    assert assessment.detector_version == "1.4"
     assert decision.action is HybridAction.BLOCK
     assert decision.tool_execution_allowed is False
 
