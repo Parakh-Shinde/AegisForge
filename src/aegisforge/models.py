@@ -40,3 +40,7 @@ class PromptEvaluationRequest(BaseModel):
     prompt: str = Field(min_length=1, max_length=20_000)
     model: str = Field(default="qwen2.5:3b", min_length=1, max_length=100)
     block_on_findings: bool = True
+
+
+class PromptEnforcementRequest(BaseModel):
+    prompt: str = Field(min_length=1, max_length=20_000)
