@@ -106,6 +106,29 @@ _SIGNALS = (
         0.90,
     ),
     _Signal(
+        "covert_exfiltration",
+        re.compile(
+            r"\b(?:return|provide|send|transmit)\b.{0,48}"
+            r"\b(?:private|protected|confidential|hidden)\b.{0,32}"
+            r"\b(?:setup text|initialization text|system prompt|instruction)s?\b.{0,64}"
+            r"\b(?:one character|one token|small chunks?)\b.{0,32}"
+            r"\b(?:at a time|separately)\b.{0,64}"
+            r"\b(?:filter|detector|monitor)s?\b.{0,24}"
+            r"\b(?:cannot|can't|avoid|bypass|evade)\b"
+        ),
+        0.90,
+    ),
+    _Signal(
+        "credential_file_access",
+        re.compile(
+            r"\b(?:use|invoke|call)\b.{0,48}\b(?:function|tool|api)\b.{0,32}"
+            r"\b(?:run|execute)\b.{0,32}\b(?:command|shell)\b.{0,48}"
+            r"\b(?:read|access|open|copy)\b.{0,32}"
+            r"\b(?:local\s+)?(?:credential|secret|token|key)\s+files?\b"
+        ),
+        0.95,
+    ),
+    _Signal(
         "tool_abuse",
         re.compile(
             r"\b(?:execute|invoke|run|call)\b.{0,48}"
@@ -129,7 +152,7 @@ class DeterministicSemanticDetector:
 
     @property
     def version(self) -> str:
-        return "1.3"
+        return "1.4"
 
     def assess(self, prompt: str) -> SemanticAssessment:
         started_at = perf_counter()
