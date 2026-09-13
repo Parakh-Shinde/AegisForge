@@ -36,7 +36,7 @@ def test_covert_exfiltration_and_credential_access_block(
     assert rule_id in {finding.rule_id for finding in findings}
     assert assessment.verdict is SemanticVerdict.MALICIOUS
     assert assessment.category == category
-    assert assessment.detector_version == "1.4"
+    assert assessment.detector_version == "1.5"
     assert decision.action is HybridAction.BLOCK
     assert decision.tool_execution_allowed is False
 
