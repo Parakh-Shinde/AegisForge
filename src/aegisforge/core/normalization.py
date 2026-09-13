@@ -8,6 +8,11 @@ from dataclasses import dataclass
 
 _CONFUSABLES = str.maketrans({"І": "I", "і": "i", "О": "O", "о": "o", "А": "A", "а": "a"})
 _BASE64 = re.compile(r"(?<![A-Za-z0-9+/=])([A-Za-z0-9+/]{20,}={0,2})(?![A-Za-z0-9+/=])")
+_QUOTED_FRAGMENT_CHAIN = re.compile(
+    r"(?P<chain>['\"][A-Za-z]{1,32}['\"]"
+    r"(?:\s*\+\s*['\"][A-Za-z ]{1,64}['\"]){1,7})"
+)
+_QUOTED_FRAGMENT = re.compile(r"['\"]([A-Za-z ]{1,64})['\"]")
 
 
 @dataclass(frozen=True)
@@ -31,7 +36,18 @@ def normalize_prompt(prompt: str, *, max_chars: int = 20_000) -> NormalizedPromp
         transformations.append("unicode_nfkc")
     if mapped != nfkc:
         transformations.append("confusable_mapping")
-    decoded: list[str] = []
+
+    inspection_variants: list[str] = []
+    for match in _QUOTED_FRAGMENT_CHAIN.finditer(mapped):
+        parts = _QUOTED_FRAGMENT.findall(match.group("chain"))
+        reconstructed = mapped[: match.start()] + "".join(parts) + mapped[match.end() :]
+        normalized_variant = " ".join(reconstructed.split())
+        if normalized_variant not in inspection_variants:
+            inspection_variants.append(normalized_variant)
+    if inspection_variants:
+        transformations.append("quoted_fragment_join")
+
+    decoded_base64 = False
     for match in _BASE64.finditer(mapped):
         token = match.group(1)
         if len(token) > 4096:
@@ -41,12 +57,14 @@ def normalize_prompt(prompt: str, *, max_chars: int = 20_000) -> NormalizedPromp
         except (binascii.Error, UnicodeDecodeError):
             continue
         if value.isprintable():
-            decoded.append(value[:4096])
-    if decoded:
+            inspection_variants.append(value[:4096])
+            decoded_base64 = True
+    if decoded_base64:
         transformations.append("base64_decode")
+
     return NormalizedPrompt(
         bounded,
         " ".join(mapped.split()),
-        tuple(decoded),
+        tuple(inspection_variants),
         tuple(transformations),
     )

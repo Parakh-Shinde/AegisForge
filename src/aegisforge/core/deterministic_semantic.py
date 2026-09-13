@@ -86,6 +86,26 @@ _SIGNALS = (
         0.90,
     ),
     _Signal(
+        "fragmented_override",
+        re.compile(
+            r"\b(?:disregard|ignore|bypass)\b.{0,40}"
+            r"\b(?:safeguard|control|restriction|rule|policy)s?\b"
+        ),
+        0.90,
+    ),
+    _Signal(
+        "persistent_override",
+        re.compile(
+            r"\b(?:treat|regard|record)\b.{0,32}\b(?:this|following)\b.{0,24}"
+            r"\b(?:request|message|instruction)\b.{0,40}"
+            r"\b(?:permanent|persistent|lasting)\b.{0,32}"
+            r"\b(?:policy|rule|instruction)\s+(?:update|change)\b.{0,64}"
+            r"\b(?:apply|use|enforce|follow)\b.{0,48}"
+            r"\b(?:future|later|subsequent)\b"
+        ),
+        0.90,
+    ),
+    _Signal(
         "tool_abuse",
         re.compile(
             r"\b(?:execute|invoke|run|call)\b.{0,48}"
@@ -109,12 +129,20 @@ class DeterministicSemanticDetector:
 
     @property
     def version(self) -> str:
-        return "1.2"
+        return "1.3"
 
     def assess(self, prompt: str) -> SemanticAssessment:
         started_at = perf_counter()
-        normalized = normalize_prompt(prompt).normalized.casefold()
-        matches = tuple(signal for signal in _SIGNALS if signal.pattern.search(normalized))
+        normalized_prompt = normalize_prompt(prompt)
+        inspection_texts = tuple(
+            candidate.casefold() for candidate in normalized_prompt.inspection_texts
+        )
+        normalized = inspection_texts[0]
+        matches = tuple(
+            signal
+            for signal in _SIGNALS
+            if any(signal.pattern.search(candidate) for candidate in inspection_texts)
+        )
         score = max((signal.weight for signal in matches), default=0.0)
         context = classify_context(normalized)
 
