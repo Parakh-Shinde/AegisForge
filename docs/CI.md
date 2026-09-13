@@ -24,3 +24,15 @@ separate operational metric. The report also records provider failures and seman
 
 The reference provider demonstrates the integration and evidence contract. Its synthetic-corpus
 measurements are not claims of general production performance.
+
+
+## v0.10 adapted regression gate
+
+CI runs `aegisforge v010-regression-gate` against 24 cases adapted from the
+completed holdout-v2 evaluation. Both rule-only and hybrid classifications must
+retain perfect precision, recall, and F1 with zero false positives, false
+negatives, and provider failures.
+
+Artifacts are published as `v010-adapted-regression.json`,
+`v010-adapted-regression.md`, and `v010-regression-gate.json`. These results
+are regression evidence and are not independent holdout measurements.

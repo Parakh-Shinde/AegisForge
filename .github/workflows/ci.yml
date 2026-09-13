@@ -53,6 +53,9 @@ jobs:
       - name: Enforce benchmark quality thresholds
         run: aegisforge benchmark-gate | tee reports/quality-gate.json
 
+      - name: Enforce v0.10 adapted regression gate
+        run: aegisforge v010-regression-gate --output reports
+
       - name: Upload benchmark evidence
         if: always()
         uses: actions/upload-artifact@v7
@@ -66,6 +69,9 @@ jobs:
             reports/hybrid-benchmark.json
             reports/hybrid-benchmark.md
             reports/quality-gate.json
+            reports/v010-adapted-regression.json
+            reports/v010-adapted-regression.md
+            reports/v010-regression-gate.json
           if-no-files-found: warn
           retention-days: 30
 
