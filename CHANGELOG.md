@@ -2,6 +2,32 @@
 
 All notable changes to AegisForge are documented in this file.
 
+## [0.10.0] - 2026-09-13
+
+### Added
+
+- Bounded defensive-context classification for educational and incident-response prompts.
+- Compositional override, indirect instruction, delegation, fragmentation, and persistence detection.
+- Covert exfiltration, credential-access, tool-abuse, framing, and multilingual evidence.
+- Adapted holdout-v2 regression corpus with distinct case identifiers and classification.
+- Rule-only and hybrid regression thresholds covering all 24 adapted cases.
+- `v010-regression-gate` CLI command and versioned JSON/Markdown CI evidence.
+
+### Evaluation
+
+The immutable holdout-v2 first-run result remains the independent v0.9 evidence.
+After error analysis and detector revision, all 24 derived cases pass as explicitly
+labeled adapted regression data with precision, recall, and F1 of `1.0000`, zero
+false positives, zero false negatives, and zero provider failures. These results
+must not be represented as fresh holdout or production performance.
+
+### Security
+
+- Defensive exemptions are bounded and covered by adversarial negative tests.
+- Semantic evidence remains non-authorizing for tool execution.
+- Corpus-size and metric gates prevent silent case removal or known-error regression.
+- CI never reruns the preserved holdout-v2 evaluation.
+
 ## [0.9.0] - 2026-09-10
 
 ### Added
