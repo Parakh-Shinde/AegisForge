@@ -15,6 +15,7 @@ from aegisforge.core.lab import LabMode
 from aegisforge.core.ollama import OllamaClient, OllamaError
 from aegisforge.core.provenance import build_evaluation_provenance
 from aegisforge.core.quality_gate import evaluate_quality_gate
+from aegisforge.core.regression_gate import evaluate_hybrid_regression_gate
 from aegisforge.core.reporting import write_json_report, write_markdown_report
 from aegisforge.core.runner import run_hero_scenario
 from aegisforge.core.target_policy import TargetPolicyError, validate_target
@@ -323,4 +324,43 @@ def benchmark_gate() -> None:
         )
     )
     if not passed:
+        raise typer.Exit(code=1)
+
+
+
+@app.command("v010-regression-gate")
+def v010_regression_gate(
+    output: Path = typer.Option(Path("reports"), help="Regression evidence directory."),
+) -> None:
+    """Gate the revised detector on explicitly adapted holdout-v2 cases."""
+    corpus_path = Path(__file__).parent / "data" / "adapted_holdout_v2.json"
+    result = benchmark_hybrid(
+        DeterministicSemanticDetector(),
+        load_corpus(corpus_path),
+    )
+    gate = evaluate_hybrid_regression_gate(result)
+    json_path = write_hybrid_benchmark_report(
+        result,
+        output / "v010-adapted-regression.json",
+    )
+    markdown_path = write_hybrid_benchmark_report(
+        result,
+        output / "v010-adapted-regression.md",
+    )
+    payload = {
+        "passed": gate.passed,
+        "corpus": "adapted_holdout_v2",
+        "classification": "adapted_regression",
+        "source": "holdout_v2",
+        "independent_evaluation": False,
+        "gate": gate.to_dict(),
+        "rule_only": result.to_dict()["rule_only"],
+        "hybrid": result.to_dict()["hybrid"],
+        "reports": [str(json_path), str(markdown_path)],
+    }
+    gate_path = output / "v010-regression-gate.json"
+    gate_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    payload["reports"].append(str(gate_path))
+    typer.echo(json.dumps(payload, indent=2))
+    if not gate.passed:
         raise typer.Exit(code=1)
