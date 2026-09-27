@@ -6,7 +6,8 @@ from aegisforge.config import settings
 from aegisforge.core.ai_evaluation import evaluate_prompt
 from aegisforge.core.benchmark import benchmark_guard
 from aegisforge.core.deterministic_semantic import DeterministicSemanticDetector
-from aegisforge.core.hybrid_detection import HybridAction, evaluate_hybrid_prompt
+from aegisforge.core.enforcement_policy import apply_enforcement_mode
+from aegisforge.core.hybrid_detection import evaluate_hybrid_prompt
 from aegisforge.core.lab import LabMode
 from aegisforge.core.ollama import OllamaClient, OllamaError
 from aegisforge.core.runner import run_hero_scenario
@@ -84,21 +85,17 @@ def benchmark_prompt_guard() -> dict[str, object]:
     return benchmark_guard().to_dict()
 
 
-
 @app.post("/v1/security/prompts/enforce")
 def enforce_prompt(request: PromptEnforcementRequest) -> JSONResponse:
-    """Apply hybrid prompt policy before downstream model or tool handling."""
+    """Apply configured deployment behavior after hybrid prompt evaluation."""
     decision = evaluate_hybrid_prompt(
         request.prompt,
         detector=DeterministicSemanticDetector(),
     )
-    status_codes = {
-        HybridAction.ALLOW: 200,
-        HybridAction.REVIEW: 202,
-        HybridAction.BLOCK: 403,
-    }
+    enforcement = apply_enforcement_mode(decision, settings.enforcement_mode)
     payload = {
-        "accepted": decision.action is HybridAction.ALLOW,
+        "accepted": enforcement.accepted,
+        "enforcement": enforcement.to_dict(),
         "decision": decision.to_dict(),
     }
-    return JSONResponse(content=payload, status_code=status_codes[decision.action])
+    return JSONResponse(content=payload, status_code=enforcement.status_code)
