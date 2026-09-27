@@ -19,6 +19,10 @@ general-purpose exploitation tool.
 - Detection engineering: correlated AI/API attack-chain detections with analyst-readable evidence.
 - Engineering quality: Python CLI/API, tests, CI, benchmark gates, release notes, and security policy.
 
+### Demo Evidence
+
+![AegisForge demo and benchmark evidence](docs/assets/demo-evidence.png)
+
 ## Why this project matters
 
 AI applications can fail across several trust boundaries at once: untrusted retrieved content can
