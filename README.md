@@ -14,6 +14,11 @@ emulation, normalized telemetry, detection engineering, and measurable quality g
 portfolio-grade system. It is intentionally designed for isolated, authorized labs—not as a
 general-purpose exploitation tool.
 
+- AI security: prompt-injection inspection, guardrail evaluation, and adversarial prompt testing.
+- API security: tenant-boundary authorization modeling and secure/vulnerable mode comparison.
+- Detection engineering: correlated AI/API attack-chain detections with analyst-readable evidence.
+- Engineering quality: Python CLI/API, tests, CI, benchmark gates, release notes, and security policy.
+
 ## Why this project matters
 
 AI applications can fail across several trust boundaries at once: untrusted retrieved content can
